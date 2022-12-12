@@ -32,13 +32,13 @@ def decode_file(path):
             itertools.islice(split, 1, None, 2)):
         raw_data = raw_data.strip('\n') # Strip  extra newlines from start/end
         
-        if comment:
-            raw_data = comment + '\n' + raw_data
-            comment = ''
         before_last_tag, sep, extra_stuff = raw_data.rpartition(']')
         if sep and extra_stuff.strip():
             comment = extra_stuff.strip()
             raw_data = before_last_tag + sep 
+        if comment:
+            raw_data = raw_data + ' ' + comment + '\n' 
+            comment = ''
         object = Object(fname, type, root_type, name)
         object.extra_data = raw_data
         objects.append(object)
@@ -109,7 +109,6 @@ def decode_mod(path, base_dataset):
             o.added = True
         elif keyword == 'MODIFY':
             try:
-                print(o.root_type, o.type, o.name)
                 core_object = base_dataset.get_object(o.root_type,o.type, o.name)
                 if not core_object:
                     print(('Error decoding modification to object [%s:%s] in mod %s: object does not exist. Skipping.' % (o.type, o.name, path)))
