@@ -149,30 +149,30 @@ class MainFrame(frame.ExtendedFrame, frame.TreeController):
             
         # Now, let's verify the checksums of all the mods and update if needed
         core_checksum = str(self.core_dataset.checksum())
-        for mod, headers in mod_headers.items():
+        for mod, headers in list(mod_headers.items()):
             if 'meta' in headers:
                 continue # Verify only core files for now
             if headers['checksum'] != core_checksum:
                 if not notified:
                     notified = True
-                    print 'Updating mods...'
+                    print('Updating mods...')
                     self.info_dialog('DFMM has detected a change in your core files. The patches defined in your mods will be re-rolled. Depending on the number and size of your mods, this may take several minutes. Watch the console window for possible notifications about changes that cannot be applied to the new files.', 'Core files changed')
-                print 'Processing mod "%s"...' % mod
+                print(('Processing mod "%s"...' % mod))
                 mod = decode_mod(mod, self.core_dataset)
                 encode_mod(mod, overwrite=True)
         if notified:
-            print 'Done updating mods.'
+            print('Done updating mods.')
             
             
         # First, process the normal mods. This makes them available for the
         # metamods to reference
-        for path, headers in mod_headers.items():
+        for path, headers in list(mod_headers.items()):
             if 'meta' not in headers:
                 dialog.task_started(label=headers['name'])
                 self.load_normal_mod(path)
                 
         # Then, the metamods
-        for path, headers in mod_headers.items():
+        for path, headers in list(mod_headers.items()):
             if 'meta' in headers:
                 dialog.task_started(label=headers['name'])
                 self.load_metamod(path, headers)
@@ -534,8 +534,8 @@ class MainFrame(frame.ExtendedFrame, frame.TreeController):
         return dataset
         
     def install(self, event):
-        print 'Installing mods'
-        print '-' * 20
+        print('Installing mods')
+        print(('-' * 20))
         dataset = self.merge_selected_mods(callback=ProgressDialog(self, 'Merging mods'))
         path = os.path.join('..','raw','objects')
         current_files = os.listdir(path)
@@ -544,7 +544,7 @@ class MainFrame(frame.ExtendedFrame, frame.TreeController):
                 os.remove(os.path.join(path, f))
         encode_objects(dataset.objects, path, callback=ProgressDialog(self, 'Installing data'))
         self.last_checksum = self.mods_checksum()
-        print 'Install complete'
+        print('Install complete')
         
     def merge(self, event):
         name = self.text_entry_dialog(
@@ -552,12 +552,12 @@ class MainFrame(frame.ExtendedFrame, frame.TreeController):
             'Merge mods')
         if name:
             fname = encode_filename(name)
-            print 'Merging mods'
-            print '-' * 20
+            print('Merging mods')
+            print(('-' * 20))
             dataset = self.merge_selected_mods()
             mod = Mod(name, os.path.join('mods', fname), self.core_dataset, self.core_dataset.difference(dataset))
             encode_mod(mod)
-            print 'Merge complete'
+            print('Merge complete')
             self.reload_mods()
         
     def exit(self, event):

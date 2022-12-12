@@ -51,9 +51,9 @@ class TreeController(object):
     def init_image_list(self):
         isize = (16,16)
         il = wx.ImageList(isize[0], isize[1])
-        self.img_folder   = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FOLDER,  wx.ART_OTHER, isize))
-        self.img_folder_open = il.Add(wx.ArtProvider_GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER,isize))
-        self.img_file   = il.Add(wx.ArtProvider_GetBitmap(wx.ART_REPORT_VIEW, wx.ART_OTHER,isize))
+        self.img_folder   = il.Add(wx.ArtProvider.GetBitmap(wx.ART_FOLDER,  wx.ART_OTHER, isize))
+        self.img_folder_open = il.Add(wx.ArtProvider.GetBitmap(wx.ART_FILE_OPEN, wx.ART_OTHER,isize))
+        self.img_file   = il.Add(wx.ArtProvider.GetBitmap(wx.ART_REPORT_VIEW, wx.ART_OTHER,isize))
         self.img_tick = il.Add(images.tick.ConvertToBitmap(16))
         self.img_cross = il.Add(images.cross.ConvertToBitmap(16))
 

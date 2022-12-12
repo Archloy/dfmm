@@ -5,7 +5,7 @@ import os
 import zipfile
 
 def encode_object(o):
-    return ('[%s:%s]\n' % (o.type, o.name) + o.extra_data + '\n\n').encode('cp437')
+    return ('[%s:%s]\n' % (o.type, o.name) + o.extra_data + '\n\n')
 
 def encode_objects(objects, targetpath, callback=dummy_callback):
     files = {}
@@ -14,7 +14,7 @@ def encode_objects(objects, targetpath, callback=dummy_callback):
             files[object.file_name] = []
         files[object.file_name].append(object)
     callback.set_task_number(len(files))
-    for fname, objects in files.items():
+    for fname, objects in list(files.items()):
         callback.task_started(fname)
         f = open(os.path.join(targetpath, fname), 'wt')
         f.write('%s\n\n' % fname.split('.')[0])
@@ -30,10 +30,10 @@ def encode_to_directory(objects, targetpath):
             files[object.file_name] = []
         files[object.file_name].append(object)
     modified_files = {}
-    for fname, objects in files.items(): # Only bother saving modified files
+    for fname, objects in list(files.items()): # Only bother saving modified files
         if True in [o.added or o.modified or o.deleted for o in objects]:
             modified_files[fname] = objects
-    for fname, objects in modified_files.items():
+    for fname, objects in list(modified_files.items()):
         encode_objects(objects, targetpath)
         
 
@@ -64,11 +64,11 @@ def encode_mod(mod, overwrite=False, callback=dummy_callback):
     for object in mod.changed_objects:
         callback.task_started(str(object))
         try:
-            f.write('!'+object_to_dfmm_command(object, mod.base).encode('cp437') + '\n')
+            f.write('!'+object_to_dfmm_command(object, mod.base) + '\n')
         except UnicodeDecodeError:
-            print object.type
-            print object.name
-            print object.extra_data
+            print((object.type))
+            print((object.name))
+            print((object.extra_data))
             raise
     f.close()
     callback.done()

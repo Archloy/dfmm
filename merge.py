@@ -50,9 +50,9 @@ if __name__ == '__main__':
     patches = differ.diff_main(base.strip(), new.strip())
     
     for op, data in patches:
-        print patch
-        print differ.match_main(current, patch, 0)
-        print
+        print(patch)
+        print((differ.match_main(current, patch, 0)))
+        print()
         
     
     #print merge_data(base, current, new)

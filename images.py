@@ -1,5 +1,5 @@
 import base64
-from cStringIO import StringIO
+from io import BytesIO
 import wx
 
 tick_data =  ('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29'
@@ -24,6 +24,7 @@ cross_data = ('iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6
 'tQd4B0GYJNZsDSiAEadUBCkstPtN3Avs2Msa+Dt9XfxoFSNYF/Bh9gP0bOqHLAm2WUF1YQskwrVFYPWk'
 'f3h1iXwbvqGfFPSGW9Eah8HSS9fuZDnS32f71m8KFY7xs/QZyu6TH2+2+FAAAAABJRU5ErkJggg==')
 
-tick = wx.ImageFromStream(StringIO(base64.b64decode(tick_data)))
-cross = wx.ImageFromStream(StringIO(base64.b64decode(cross_data)))
+tic_base64 = base64.b64decode(tick_data)
+tick = wx.ImageFromStream(BytesIO(tic_base64))
+cross = wx.ImageFromStream(BytesIO(base64.b64decode(cross_data)))
 

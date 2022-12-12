@@ -4,6 +4,7 @@ import re
 import os
 
 def encode_filename(name):
+    name = name.decode()
     return re.sub('[^\w-]+', '', name.lower().replace(' ','-')) + '.dfmod'
     
 def path_to_filename(path):
@@ -17,9 +18,10 @@ class DataSet(object):
         for object in self.objects:
             self.objects_map[object.root_type + object.type + object.name] = object
         
-    def get_object(self, root_type, type, name):
-        key = root_type + type + name
+    def get_object(self, root_type, _type, name):
+        key = root_type + _type + name
         if key not in self.objects_map:
+            print(key)
             return None
         return self.objects_map[key]
         
@@ -38,10 +40,10 @@ class DataSet(object):
             current_object = self.get_object(object.root_type, object.type, object.name)
             core_object = core_dataset.get_object(object.root_type, object.type, object.name)
             if not current_object:
-                print 'Failed to apply edits to [%s:%s] from mod %s because the object does not exist' % (object.type, object.name, mod.name)
+                print(('Failed to apply edits to [%s:%s] from mod %s because the object does not exist' % (object.type, object.name, mod.name)))
                 continue
             if current_object.deleted:
-                print 'Failed to apply edits to [%s:%s] from mod %s due to prior deletion' % (object.type, object.name, mod.name)
+                print(('Failed to apply edits to [%s:%s] from mod %s due to prior deletion' % (object.type, object.name, mod.name)))
                 continue
             if not current_object.modified:
                 current_object.extra_data = object.extra_data
@@ -51,16 +53,16 @@ class DataSet(object):
                 if result[1]:
                     current_object.extra_data = result[0]
                     current_object.modified = True
-                    print 'Merged edit to [%s:%s] from mod %s with prior edits' % (object.type, object.name, mod.name)
+                    print(('Merged edit to [%s:%s] from mod %s with prior edits' % (object.type, object.name, mod.name)))
                 else:
                     if partial_merge:
                         current_object.extra_data = result[0]
                         current_object.modified = True
-                        print 'Merged edit to [%s:%s] from mod %s with prior edits (Note: merge was partial)' % (object.type, object.name, mod.name)
+                        print(('Merged edit to [%s:%s] from mod %s with prior edits (Note: merge was partial)' % (object.type, object.name, mod.name)))
                     else:
-                        print 'Failed to merge edit to [%s:%s] from mod "%s" due to prior edit (Partial merges are disabled)' % (object.type, object.name, mod.name)
+                        print(('Failed to merge edit to [%s:%s] from mod "%s" due to prior edit (Partial merges are disabled)' % (object.type, object.name, mod.name)))
             else:
-                print 'Failed to apply edits to [%s:%s] from mod %s due to prior edit (Merges are disabled)' % (object.type, object.name, mod.name)
+                print(('Failed to apply edits to [%s:%s] from mod %s due to prior edit (Merges are disabled)' % (object.type, object.name, mod.name)))
         for object in mod.deleted_objects:
             current_object = self.get_object(object.root_type, object.type, object.name)
             if not current_object or current_object not in self.objects: # Already deleted, don't worry about it
@@ -71,9 +73,9 @@ class DataSet(object):
             elif delete_override:
                 current_object.deleted = True
                 self.objects.remove(current_object)
-                print 'Applied deletion of [%s:%s] from mod "%s", overriding prior edit' % (object.type, object.name, mod.name)
+                print(('Applied deletion of [%s:%s] from mod "%s", overriding prior edit' % (object.type, object.name, mod.name)))
             else:
-                print 'Failed to apply deletion of [%s:%s] from mod "%s" due to prior edit' % (object.type, object.name, mod.name)
+                print(('Failed to apply deletion of [%s:%s] from mod "%s" due to prior edit' % (object.type, object.name, mod.name)))
             
     def apply_mod_for_editing(self, mod):
         for object in mod.objects:

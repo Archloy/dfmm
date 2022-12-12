@@ -4,10 +4,12 @@ import merge
 import re, os, itertools
 
 def decode_file(path):
+    print('show path:', path)
     ''' Parses a raw file and returns a list of the objects in it '''
     fname = os.path.split(path)[-1]
     objects = []
-    data = open(path, 'rt').read().decode('cp437')
+
+    data = open(path, 'rt', encoding='cp437').read()
     
     pat = re.compile(r'\[([^\[\]]+):([^\[\]]+)\]')
 
@@ -25,7 +27,7 @@ def decode_file(path):
     split = re.split(r'\[%s:([^\[\]]+)\]' % type, data)[1:]
 
     comment = ''
-    for name, raw_data in itertools.izip(
+    for name, raw_data in zip(
             itertools.islice(split, 0, None, 2),
             itertools.islice(split, 1, None, 2)):
         raw_data = raw_data.strip('\n') # Strip  extra newlines from start/end
@@ -85,9 +87,14 @@ def decode_mod_headers(path):
 def decode_mod(path, base_dataset):
     if hasattr(path, 'read'):
         f = path
+        print("f is opened")
     else:
-        f = open(path, 'rt')
-    commands = f.read().decode('cp437').split('!DFMM')[1:]
+        f = open(path, 'rt', encoding='cp437')
+        print('f is not')
+    #tda = open('/home/loy/dwarfr/test/core/'+fname, 'w')
+    #print(data, file=tda)
+    
+    commands = f.read().split('!DFMM')[1:]
     for command in commands:
         dfmm, keyword, value = command.strip().split('|', 2)
         if keyword == 'NAME':
@@ -102,9 +109,10 @@ def decode_mod(path, base_dataset):
             o.added = True
         elif keyword == 'MODIFY':
             try:
+                print(o.root_type, o.type, o.name)
                 core_object = base_dataset.get_object(o.root_type,o.type, o.name)
                 if not core_object:
-                    print 'Error decoding modification to object [%s:%s] in mod %s: object does not exist. Skipping.' % (o.type, o.name, path)
+                    print(('Error decoding modification to object [%s:%s] in mod %s: object does not exist. Skipping.' % (o.type, o.name, path)))
                     continue
                 else:
                     # Add the ampersand on the front to prevent stripping of initial tab, if any
@@ -112,11 +120,14 @@ def decode_mod(path, base_dataset):
                     n = results[1].count(False)
                     t = len(results[1])
                     if n != 0:
-                        print 'Warning:  %d/%d modifications to object [%s:%s] in mod %s could not be applied and have been skipped.' % (n, t, o.type, o.name, path)
+                        print(('Warning:  %d/%d modifications to object [%s:%s] in mod %s could not be applied and have been skipped.' % (n, t, o.type, o.name, path)))
                     o.extra_data = results[0][1:] # Remove ampersand
                     o.patch_cache = patch_data # Save patch data for faster save
-            except:
-                print 'Error decoding modification to object [%s:%s] in mod %s. Skipping.' % (o.type, o.name, path)
+            except Exception as e:
+                print(e)
+                import traceback 
+                traceback.print_exc()
+                print(('Error decoding modification to object [%s:%s] in mod %s. Skipping.' % (o.type, o.name, path)))
                 continue
             o.modified = True
         elif keyword == 'DELETE':
@@ -137,7 +148,7 @@ if __name__ == '__main__':
     core_dataset = decode_core()
     #print decode_mod('mods2/genesis.dfmod', core_dataset)
     #print decode_file('core/item_food.txt')
-    print verify_mod_checksum('mods/genesis.dfmod', core_dataset)
+    print((verify_mod_checksum('mods/genesis.dfmod', core_dataset)))
     #print decode_all_mods()
     
     #defense_dataset = decode_directory('defense')

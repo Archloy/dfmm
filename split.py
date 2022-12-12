@@ -110,7 +110,7 @@ class MyLog:
     def __init__(self):
         pass
     def WriteText(self, text):
-        print text
+        print(text)
 
 class ModSplitterFrame(frame.ExtendedFrame):
     def __init__(self, parent, mod, core_dataset):
@@ -180,7 +180,7 @@ class ModSplitterFrame(frame.ExtendedFrame):
         if not mod2parent and self.meta_checkbox.IsChecked():
             mod2parent = self.mod
         encode_mod(Mod(name2, path2, self.core_dataset, self.tree2.objects, mod2parent))
-        print 'Mod split.'
+        print('Mod split.')
         if self.parent:
             self.parent.reload_mods()
         self.Close()

@@ -54,7 +54,7 @@ class ProgressDialog(wx.Dialog):
         if i is not None:
             self.i = i
         percent = self.i * 100 / self.task_number
-        self.gauge.SetValue(percent)
+        self.gauge.SetValue(int(percent))
         self.gauge.Update()
         self.SetTitle('%s (%d%%)' % (self.title_base, percent))
         self.label.SetLabel(label)
