@@ -16,7 +16,7 @@ def encode_objects(objects, targetpath, callback=dummy_callback):
     callback.set_task_number(len(files))
     for fname, objects in list(files.items()):
         callback.task_started(fname)
-        f = open(os.path.join(targetpath, fname), 'wt')
+        f = open(os.path.join(targetpath, fname), 'wt', newline='\n')
         f.write('%s\n\n' % fname.split('.')[0])
         f.write('[OBJECT:%s]\n\n' % objects[0].root_type)
         f.write(''.join(map(encode_object, objects)))
